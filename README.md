@@ -2,6 +2,8 @@
 
 Upload PDFs, ask questions in plain English, and get answers that cite the exact page they came from.
 
+**Live demo:** https://documind-twp8.onrender.com (free hosting: the first request after a quiet spell can take about a minute while the server wakes up)
+
 [![CI](https://github.com/aryan2006-saini/DocuMind/actions/workflows/ci.yml/badge.svg)](https://github.com/aryan2006-saini/DocuMind/actions/workflows/ci.yml) ![stack](https://img.shields.io/badge/FastAPI-Python_3.13-009688) ![db](https://img.shields.io/badge/Postgres-pgvector-336791) ![ui](https://img.shields.io/badge/React-TypeScript-61dafb) ![llm](https://img.shields.io/badge/LLM-Groq_GPT--OSS_120B-f55036)
 
 ## How it works
