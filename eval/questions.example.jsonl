@@ -1,0 +1,5 @@
+// Copy to questions.jsonl and replace with 30-50 questions about PDFs you uploaded.
+// "doc" is the exact uploaded file name; "pages" are the pages that contain the answer.
+{"question": "How many days of paid leave does an employee get per year?", "doc": "guide.pdf", "pages": [2]}
+{"question": "What time does the office open on weekdays?", "doc": "guide.pdf", "pages": [1]}
+{"question": "How many bananas does banana bread need?", "doc": "recipes.pdf", "pages": [1]}
