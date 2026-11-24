@@ -5,7 +5,7 @@ from pdfgen import make_pdf
 
 from app.chunking import chunk_pages, clean_text, extract_pages, split_text
 from app.embeddings import HashEmbedder
-from app.llm import FakeLLM
+from app.llm import FakeLLM, GroqLLM, LLMError
 from app.rag import build_prompt, parse_citations
 from app.retrieval import Hit, rrf
 
@@ -124,3 +124,29 @@ def test_hash_embedder_is_normalised_and_similar_for_similar_text():
     a, b, c = embedder.embed_documents(["vector database index", "vector index", "banana bread"])
     assert abs(dot(a, a) - 1) < 1e-9
     assert dot(a, b) > dot(a, c)
+
+
+# ---------- Groq client ----------
+def test_groq_reasoning_model_gets_low_effort_and_room_to_answer():
+    body = GroqLLM("key", "openai/gpt-oss-120b", 10).request_body("sys", "question")
+    assert body["reasoning_effort"] == "low"
+    assert body["max_tokens"] >= 2048
+    assert [m["role"] for m in body["messages"]] == ["system", "user"]
+
+
+def test_groq_other_models_get_no_reasoning_option():
+    assert "reasoning_effort" not in GroqLLM("key", "llama-3.1-8b-instant", 10).request_body(
+        "s", "q"
+    )
+
+
+def test_groq_empty_answer_is_an_error(monkeypatch):
+    class Reply:
+        status_code = 200
+
+        def json(self):
+            return {"choices": [{"message": {"content": None, "reasoning": "thinking..."}}]}
+
+    monkeypatch.setattr("app.llm.httpx.post", lambda *a, **k: Reply())
+    with pytest.raises(LLMError, match="empty answer"):
+        GroqLLM("key", "openai/gpt-oss-120b", 10).complete("sys", "question")

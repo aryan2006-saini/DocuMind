@@ -29,20 +29,27 @@ class GroqLLM:
         self.name = f"groq:{model}"
         self.timeout_s = timeout_s
 
+    def request_body(self, system: str, user: str) -> dict:
+        body = {
+            "model": self.model,
+            "temperature": 0.1,
+            # Reasoning models spend part of this budget thinking before they answer.
+            "max_tokens": 2048,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+        }
+        if "gpt-oss" in self.model:
+            body["reasoning_effort"] = "low"  # answers come from the given sources
+        return body
+
     def complete(self, system: str, user: str) -> str:
         try:
             response = httpx.post(
                 GROQ_URL,
                 headers={"Authorization": f"Bearer {self.api_key}"},
-                json={
-                    "model": self.model,
-                    "temperature": 0.1,
-                    "max_tokens": 800,
-                    "messages": [
-                        {"role": "system", "content": system},
-                        {"role": "user", "content": user},
-                    ],
-                },
+                json=self.request_body(system, user),
                 timeout=self.timeout_s,
             )
         except httpx.HTTPError as exc:
@@ -51,7 +58,10 @@ class GroqLLM:
             raise LLMError("Groq rate limit reached. Wait a minute and try again.")
         if response.status_code != 200:
             raise LLMError(f"Groq returned {response.status_code}: {response.text[:300]}")
-        return response.json()["choices"][0]["message"]["content"].strip()
+        content = (response.json()["choices"][0]["message"].get("content") or "").strip()
+        if not content:
+            raise LLMError("Groq returned an empty answer. Try again or ask a shorter question.")
+        return content
 
 
 class FakeLLM:

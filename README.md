@@ -2,7 +2,7 @@
 
 Upload PDFs, ask questions in plain English, and get answers that cite the exact page they came from.
 
-[![CI](https://github.com/aryan2006-saini/DocuMind/actions/workflows/ci.yml/badge.svg)](https://github.com/aryan2006-saini/DocuMind/actions/workflows/ci.yml) ![stack](https://img.shields.io/badge/FastAPI-Python_3.13-009688) ![db](https://img.shields.io/badge/Postgres-pgvector-336791) ![ui](https://img.shields.io/badge/React-TypeScript-61dafb) ![llm](https://img.shields.io/badge/LLM-Groq_Llama_3.3-f55036)
+[![CI](https://github.com/aryan2006-saini/DocuMind/actions/workflows/ci.yml/badge.svg)](https://github.com/aryan2006-saini/DocuMind/actions/workflows/ci.yml) ![stack](https://img.shields.io/badge/FastAPI-Python_3.13-009688) ![db](https://img.shields.io/badge/Postgres-pgvector-336791) ![ui](https://img.shields.io/badge/React-TypeScript-61dafb) ![llm](https://img.shields.io/badge/LLM-Groq_GPT--OSS_120B-f55036)
 
 ## How it works
 
@@ -22,7 +22,7 @@ Question ──► vector search (top 20) ─┐
                           cross-encoder rerank (ms-marco-MiniLM) ──► top 5
                                             │
                                             ▼
-                Groq Llama 3.3: answer ONLY from numbered sources, cite [n]
+        Groq (GPT-OSS 120B): answer ONLY from numbered sources, cite [n]
                                             │
                                             ▼
                 answer + citations (file, page, snippet) in the React UI
@@ -71,8 +71,8 @@ No Groq key yet? Set `LLM_PROVIDER=fake` in `.env` to try everything offline. Th
 
 ```bash
 cd backend
-uv run pytest -m "not integration"   # 21 fast tests, no database
-uv run pytest                        # all 39, needs `docker compose up -d`
+uv run pytest -m "not integration"   # 24 fast tests, no database
+uv run pytest                        # all 42, needs `docker compose up -d`
 uv run ruff check .
 uv run ruff format --check .
 
