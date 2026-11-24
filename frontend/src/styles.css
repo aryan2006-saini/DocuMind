@@ -240,7 +240,9 @@ button {
   padding: 8px 10px;
   font-size: 0.82rem;
   opacity: 0.6;
-  transition: opacity 0.15s, border-color 0.15s;
+  transition:
+    opacity 0.15s,
+    border-color 0.15s;
 }
 
 .source.cited {

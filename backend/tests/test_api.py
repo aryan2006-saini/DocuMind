@@ -29,9 +29,7 @@ RECIPES = make_pdf([["Banana bread needs three ripe bananas and two cups of flou
 def uploaded(client):
     ids = {}
     for name, data in (("guide.pdf", GUIDE), ("recipes.pdf", RECIPES)):
-        response = client.post(
-            "/api/documents", files={"file": (name, data, "application/pdf")}
-        )
+        response = client.post("/api/documents", files={"file": (name, data, "application/pdf")})
         assert response.status_code == 201, response.text
         ids[name] = response.json()["id"]
     return ids
@@ -49,7 +47,9 @@ def test_upload_returns_counts(client, uploaded):
 
 
 def test_duplicate_upload_is_409(client, uploaded):
-    response = client.post("/api/documents", files={"file": ("again.pdf", GUIDE, "application/pdf")})
+    response = client.post(
+        "/api/documents", files={"file": ("again.pdf", GUIDE, "application/pdf")}
+    )
     assert response.status_code == 409
 
 

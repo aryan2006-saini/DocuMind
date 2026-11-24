@@ -1,6 +1,6 @@
 """Check the real local models end to end (no LLM key needed): embed, rerank, retrieve.
 
-    uv run python scripts/smoke_real_models.py
+uv run python scripts/smoke_real_models.py
 """
 
 import sys
@@ -21,7 +21,7 @@ docs = [
 vectors = embedder.embed_documents(docs)
 query = embedder.embed_query("How much vacation do staff get?")
 assert len(query) == settings.embed_dim, len(query)
-similarities = [sum(a * b for a, b in zip(query, v)) for v in vectors]
+similarities = [sum(a * b for a, b in zip(query, v, strict=True)) for v in vectors]
 print("embedding similarities:", [round(s, 3) for s in similarities])
 assert max(range(3), key=lambda i: similarities[i]) == 0
 

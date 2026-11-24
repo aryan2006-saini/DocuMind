@@ -74,6 +74,10 @@ cd backend
 uv run pytest -m "not integration"   # 21 fast tests, no database
 uv run pytest                        # all 39, needs `docker compose up -d`
 uv run ruff check .
+uv run ruff format --check .
+
+cd ../frontend
+npm run format:check            # Prettier
 ```
 
 The API tests use their own `documind_test` database, an offline hash embedder and the fake LLM, so they need no key and no model download.

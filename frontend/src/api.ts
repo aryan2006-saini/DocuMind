@@ -31,7 +31,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     try {
       const body = await response.json();
       if (typeof body.detail === "string") message = body.detail;
-      else if (Array.isArray(body.detail)) message = body.detail.map((d: { msg: string }) => d.msg).join("; ");
+      else if (Array.isArray(body.detail))
+        message = body.detail.map((d: { msg: string }) => d.msg).join("; ");
     } catch {
       /* keep the status text */
     }

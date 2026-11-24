@@ -50,8 +50,7 @@ def vector_search(
 ) -> list[int]:
     where, params = _doc_filter(document_ids)
     rows = conn.execute(
-        f"SELECT c.id FROM chunks c WHERE true{where}"
-        " ORDER BY c.embedding <=> %s::vector LIMIT %s",
+        f"SELECT c.id FROM chunks c WHERE true{where} ORDER BY c.embedding <=> %s::vector LIMIT %s",
         (*params, str(query_vec), limit),
     ).fetchall()
     return [r[0] for r in rows]
@@ -112,7 +111,9 @@ def retrieve(
             hits.append(hit)
 
     if mode == Mode.hybrid_rerank and reranker is not None and len(hits) > 1:
-        for hit, score in zip(hits, reranker.scores(question, [h.content for h in hits])):
+        for hit, score in zip(
+            hits, reranker.scores(question, [h.content for h in hits]), strict=True
+        ):
             hit.score = score
         hits.sort(key=lambda h: h.score, reverse=True)
 

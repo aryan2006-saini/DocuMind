@@ -98,7 +98,8 @@ export default function App() {
         {notice && <p className="notice">{notice}</p>}
 
         <h2>
-          Documents <small>{selected.length ? `${selected.length} selected` : "searching all"}</small>
+          Documents{" "}
+          <small>{selected.length ? `${selected.length} selected` : "searching all"}</small>
         </h2>
         {docs.length === 0 && <p className="muted">No documents yet.</p>}
         <ul className="docs">
@@ -109,7 +110,9 @@ export default function App() {
                   type="checkbox"
                   checked={selected.includes(doc.id)}
                   onChange={(e) =>
-                    setSelected((s) => (e.target.checked ? [...s, doc.id] : s.filter((id) => id !== doc.id)))
+                    setSelected((s) =>
+                      e.target.checked ? [...s, doc.id] : s.filter((id) => id !== doc.id),
+                    )
                   }
                 />
                 <span className="doc-name" title={doc.filename}>
@@ -117,7 +120,11 @@ export default function App() {
                 </span>
               </label>
               <span className="muted">{doc.pages}p</span>
-              <button className="icon" aria-label={`Remove ${doc.filename}`} onClick={() => onDelete(doc)}>
+              <button
+                className="icon"
+                aria-label={`Remove ${doc.filename}`}
+                onClick={() => onDelete(doc)}
+              >
                 ×
               </button>
             </li>
@@ -131,8 +138,8 @@ export default function App() {
             <div className="empty">
               <h2>Upload a PDF, then ask a question.</h2>
               <p className="muted">
-                DocuMind finds the most relevant passages with hybrid search (vectors + keywords), reranks
-                them, and answers only from those passages, with numbered citations.
+                DocuMind finds the most relevant passages with hybrid search (vectors + keywords),
+                reranks them, and answers only from those passages, with numbered citations.
               </p>
             </div>
           )}

@@ -115,9 +115,12 @@ def test_fake_llm_cites_first_source():
 
 
 # ---------- embeddings ----------
+def dot(x: list[float], y: list[float]) -> float:
+    return sum(i * j for i, j in zip(x, y, strict=True))
+
+
 def test_hash_embedder_is_normalised_and_similar_for_similar_text():
     embedder = HashEmbedder(64)
     a, b, c = embedder.embed_documents(["vector database index", "vector index", "banana bread"])
-    dot = lambda x, y: sum(i * j for i, j in zip(x, y))
     assert abs(dot(a, a) - 1) < 1e-9
     assert dot(a, b) > dot(a, c)

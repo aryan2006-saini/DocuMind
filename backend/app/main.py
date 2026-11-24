@@ -109,9 +109,7 @@ async def upload_document(file: UploadFile, conn: Conn, embedder: EmbedderDep):
     except DuplicateDocument as exc:
         raise HTTPException(409, f"This PDF is already uploaded (id {exc.existing_id}).") from exc
     except EmptyDocument as exc:
-        raise HTTPException(
-            422, "No text found in this PDF. Scanned PDFs need OCR first."
-        ) from exc
+        raise HTTPException(422, "No text found in this PDF. Scanned PDFs need OCR first.") from exc
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
     return DocumentOut(**result.__dict__)

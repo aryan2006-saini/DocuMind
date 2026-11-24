@@ -86,8 +86,12 @@ def evaluate_answers(conn, questions, k, delay_s):
         supported += is_supported
         cited += has_citation
         details.append(
-            {"question": q["question"], "answer": answer, "supported": is_supported,
-             "cited": has_citation}
+            {
+                "question": q["question"],
+                "answer": answer,
+                "supported": is_supported,
+                "cited": has_citation,
+            }
         )
         time.sleep(delay_s)  # stay inside the Groq free-tier rate limit
     n = len(questions)
@@ -100,7 +104,9 @@ def evaluate_answers(conn, questions, k, delay_s):
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawTextHelpFormatter
+    )
     parser.add_argument("--questions", type=Path, required=True)
     parser.add_argument("-k", type=int, default=5)
     parser.add_argument("--judge", action="store_true", help="also score answers with the LLM")
@@ -125,8 +131,10 @@ def main() -> None:
             except LLMError as exc:
                 raise SystemExit(f"LLM error: {exc}") from exc
             report["answers"] = answers
-            print(f"\nfaithfulness: {answers['faithfulness']:.0%}"
-                  f"   citation rate: {answers['citation_rate']:.0%}   ({answers['model']})")
+            print(
+                f"\nfaithfulness: {answers['faithfulness']:.0%}"
+                f"   citation rate: {answers['citation_rate']:.0%}   ({answers['model']})"
+            )
 
     args.out.mkdir(parents=True, exist_ok=True)
     path = args.out / f"eval-{datetime.now():%Y%m%d-%H%M%S}.json"

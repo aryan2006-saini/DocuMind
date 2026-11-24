@@ -36,5 +36,7 @@ def make_pdf(pages: list[list[str]]) -> bytes:
     out += f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n".encode()
     for offset in offsets:
         out += f"{offset:010d} 00000 n \n".encode()
-    out += f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
+    out += (
+        f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
+    )
     return bytes(out)
