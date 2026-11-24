@@ -12,6 +12,11 @@ from app.config import get_settings
 # Models download into the project folder (git-ignored), not a system-wide cache.
 MODEL_CACHE = str(Path(__file__).resolve().parents[2] / ".fastembed_cache")
 
+# Small batches and no ONNX memory arena keep peak RAM near 270 MB instead of ~690 MB,
+# so the API fits a 512 MB host (e.g. Render's free plan) at almost the same speed.
+EMBED_BATCH = 8
+ONNX_OPTIONS = {"enable_cpu_mem_arena": False}
+
 
 class Embedder(Protocol):
     dim: int
@@ -27,11 +32,11 @@ class FastEmbedder:
     def __init__(self, model_name: str, dim: int):
         from fastembed import TextEmbedding
 
-        self.model = TextEmbedding(model_name=model_name, cache_dir=MODEL_CACHE)
+        self.model = TextEmbedding(model_name=model_name, cache_dir=MODEL_CACHE, **ONNX_OPTIONS)
         self.dim = dim
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        return [vector.tolist() for vector in self.model.embed(texts)]
+        return [vector.tolist() for vector in self.model.embed(texts, batch_size=EMBED_BATCH)]
 
     def embed_query(self, text: str) -> list[float]:
         # query_embed adds the query instruction that BGE models expect
@@ -69,10 +74,10 @@ class CrossEncoderReranker:
     def __init__(self, model_name: str):
         from fastembed.rerank.cross_encoder import TextCrossEncoder
 
-        self.model = TextCrossEncoder(model_name=model_name, cache_dir=MODEL_CACHE)
+        self.model = TextCrossEncoder(model_name=model_name, cache_dir=MODEL_CACHE, **ONNX_OPTIONS)
 
     def scores(self, query: str, documents: list[str]) -> list[float]:
-        return [float(s) for s in self.model.rerank(query, documents)]
+        return [float(s) for s in self.model.rerank(query, documents, batch_size=EMBED_BATCH)]
 
 
 @lru_cache

@@ -8,9 +8,7 @@ import psycopg
 
 from app.chunking import chunk_pages, extract_pages
 from app.config import get_settings
-from app.embeddings import Embedder
-
-EMBED_BATCH = 64
+from app.embeddings import EMBED_BATCH, Embedder
 
 
 class DuplicateDocument(Exception):
